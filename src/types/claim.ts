@@ -11,6 +11,8 @@ export interface Claim {
   status: 'draft' | 'pending' | 'approved' | 'rejected' | 'correction' | 'processing' | 'paid';
   bills: Bill[];
   totalAmount: number;
+  claimLimit: number;
+  category: string;
   submittedDate: string;
   employeeId: string;
   comments?: string;

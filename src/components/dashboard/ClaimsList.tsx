@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Claim } from "@/types/claim";
 import { useNavigate } from "react-router-dom";
-import { FileText } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 
 interface ClaimsListProps {
   claims: Claim[];
@@ -9,6 +9,40 @@ interface ClaimsListProps {
 
 export default function ClaimsList({ claims }: ClaimsListProps) {
   const navigate = useNavigate();
+
+  const getStatusColor = (status: Claim['status']) => {
+    switch (status) {
+      case 'draft':
+        return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      case 'processing':
+        return 'bg-blue-100 text-blue-800';
+      case 'correction':
+        return 'bg-orange-100 text-orange-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status: Claim['status']) => {
+    switch (status) {
+      case 'pending':
+        return 'Pending Approval - Manager';
+      case 'processing':
+        return 'Pending Approval - Operations';
+      case 'correction':
+        return 'Pending Approval - Accounts';
+      case 'rejected':
+        return 'Rejected - Manager';
+      default:
+        return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+  };
 
   if (claims.length === 0) {
     return (
@@ -39,44 +73,69 @@ export default function ClaimsList({ claims }: ClaimsListProps) {
               Claim ID
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Claim Category
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Claim Limit
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Claim Amount
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Submission Date
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               Status
             </th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Amount
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Date
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              Actions
+              Action
             </th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {claims.map((claim) => (
-            <tr key={claim.id}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            <tr key={claim.id} className="hover:bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                 {claim.id}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap">
-                <span className="capitalize px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                  {claim.status}
-                </span>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {claim.category}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                ${claim.totalAmount}
+                ${claim.claimLimit.toFixed(2)}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${claim.totalAmount.toFixed(2)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {claim.submittedDate}
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => navigate(`/claims/${claim.id}`)}
-                >
-                  View
-                </Button>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(claim.status)}`}>
+                  {getStatusText(claim.status)}
+                </span>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-blue-600"
+                    onClick={() => navigate(`/claims/${claim.id}/edit`)}
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 text-red-600"
+                    onClick={() => {
+                      // Handle delete action
+                    }}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
               </td>
             </tr>
           ))}
