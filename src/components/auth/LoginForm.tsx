@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -30,20 +30,26 @@ export default function LoginForm() {
   };
 
   return (
-    <Card className="w-[350px]">
-      <CardHeader>
-        <CardTitle>Welcome to Claim Pro</CardTitle>
-        <CardDescription>Login with your Microsoft 365 account</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <Button
-          className="w-full"
-          onClick={handleMicrosoftLogin}
-          disabled={isLoading}
-        >
-          {isLoading ? "Logging in..." : "Login with Microsoft"}
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="w-full max-w-[350px] text-white">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold mb-6">ClaimPro</h1>
+        <h2 className="text-xl font-medium mb-2">Welcome</h2>
+        <p className="text-sm opacity-90">
+          Please sign in with your Microsoft credentials to continue
+        </p>
+      </div>
+      <Button
+        className="w-full bg-white text-black hover:bg-gray-100 font-medium"
+        onClick={handleMicrosoftLogin}
+        disabled={isLoading}
+      >
+        <img 
+          src="https://authjs.dev/img/providers/microsoft.svg" 
+          alt="Microsoft logo" 
+          className="w-5 h-5 mr-2"
+        />
+        {isLoading ? "Logging in..." : "Sign in with Microsoft"}
+      </Button>
+    </div>
   );
 }
