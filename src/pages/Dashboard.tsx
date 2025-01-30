@@ -3,71 +3,25 @@ import { Input } from "@/components/ui/input";
 import ClaimsList from "@/components/dashboard/ClaimsList";
 import { Claim } from "@/types/claim";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { FileText, Filter, PlusCircle, Search } from "lucide-react";
 
 export default function Dashboard() {
   const navigate = useNavigate();
   
-  // Mock data - would come from API
-  const claims: Claim[] = [
-    {
-      id: "CP102845636",
-      status: "draft",
-      employeeId: "EMP001",
-      submittedDate: "12 Dec 24",
-      totalAmount: 900.00,
-      claimLimit: 700.00,
-      category: "Communication",
-      bills: []
-    },
-    {
-      id: "CP102845636",
-      status: "pending",
-      employeeId: "EMP001",
-      submittedDate: "12 Dec 24",
-      totalAmount: 900.00,
-      claimLimit: 700.00,
-      category: "Communication",
-      bills: []
-    },
-    {
-      id: "CP102845636",
-      status: "processing",
-      employeeId: "EMP001",
-      submittedDate: "12 Dec 24",
-      totalAmount: 900.00,
-      claimLimit: 700.00,
-      category: "Communication",
-      bills: []
-    },
-    {
-      id: "CP102845636",
-      status: "correction",
-      employeeId: "EMP001",
-      submittedDate: "12 Dec 24",
-      totalAmount: 900.00,
-      claimLimit: 700.00,
-      category: "Communication",
-      bills: []
-    },
-    {
-      id: "CP102845636",
-      status: "rejected",
-      employeeId: "EMP001",
-      submittedDate: "12 Dec 24",
-      totalAmount: 900.00,
-      claimLimit: 700.00,
-      category: "Communication",
-      bills: []
-    }
-  ];
+  const { data: claims, isLoading, error } = useQuery<Claim[]>('claims', async () => {
+    const response = await axios.get('/api/claims');
+    return response.data;
+  });
 
-  // Mock statistics - would come from API
-  const stats = {
-    total: 14,
-    approved: 10,
-    rejected: 4
-  };
+  const { data: stats } = useQuery('stats', async () => {
+    const response = await axios.get('/api/stats');
+    return response.data;
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading claims</div>;
 
   return (
     <div className="container mx-auto py-8 px-4">
